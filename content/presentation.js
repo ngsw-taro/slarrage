@@ -2,23 +2,36 @@ const messageCounts = {
   random: 0,
   bottom: 0,
 };
+let preference;
+
+// 初回読み込み時、プリファレンスの要求を行う
+chrome.runtime.sendMessage({ getPreference: true }, (response) => {
+  preference = response.preference;
+});
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   const { messages } = request;
-  messages.forEach(show);
+  if (messages != null) {
+    messages.forEach(show);
+  }
+  if (request.preference != null) {
+    preference = request.preference;
+  }
 });
 
 const show = (message) => {
   const element = createBaseElement(message);
   if (element == null) return;
+  console.log(preference.opacity);
 
   const lifespan = calcLifespan(message);
   const commands = message.command.split(" ");
   const position = getPosition(commands);
   element.style = `
+    opacity: ${preference.opacity};
     z-index: ${10000 + messageCounts.random + messageCounts.bottom}; 
     animation-duration: ${lifespan}s;
-    font-size: ${getFontSize(commands)};
+    font-size: ${getFontSize(commands, preference.fontSize)};
     color: ${getColor(commands)};
     ${getStyleForPosition(position)}
   `;
@@ -51,10 +64,15 @@ const createBaseElement = ({ text, imageUrl }) => {
   return null;
 };
 
-const getFontSize = (commands) => {
-  if (commands.some((it) => it === "small")) return "24px";
-  if (commands.some((it) => it === "big")) return "64px";
-  return "32px";
+const getFontSize = (commands, scale) => {
+  let basePx = 32;
+  if (commands.some((it) => it === "small")) {
+    basePx = 24;
+  }
+  if (commands.some((it) => it === "big")) {
+    basePx = 64;
+  }
+  return `${basePx * scale}px`;
 };
 
 const getColor = (commands) => {
