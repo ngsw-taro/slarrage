@@ -1,10 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Slarrge</title>
-</head>
-<body>
-
-</body>
+    <script src="popup.js"></script>
+    <style>
+      body {
+        width: 240px;
+        padding: 16px;
+      }
+      #preference {
+        display: grid;
+        grid-template-columns: auto auto;
+        grid-row-gap: 8px;
+      }
+      #preference label {
+        font-size: 14px;
+      }
+      #author {
+        margin-top: 16px;
+        color: gray;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="preference">
+      <label for="opacity-input">Opacity</label>
+      <input id="opacity-input" type="range" min="0" max="1" step="0.05" />
+      <label for="font-size-input">Font Size</label>
+      <input id="font-size-input" type="range" min="0.5" max="3" step="0.1" />
+    </div>
+    <div id="author">
+      Developed by <a href="https://twitter.com/ngsw_taro">@ngsw_taro</a>
+    </div>
+  </body>
 </html>
