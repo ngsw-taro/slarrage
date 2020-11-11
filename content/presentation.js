@@ -22,10 +22,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 const show = (message) => {
   const element = createBaseElement(message);
   if (element == null) return;
-  console.log(preference.opacity);
+
+  const commands = message.command.split(" ");
+  if (isIgnore(commands)) return;
 
   const lifespan = calcLifespan(message);
-  const commands = message.command.split(" ");
   const position = getPosition(commands);
   element.style = `
     opacity: ${preference.opacity};
@@ -62,6 +63,10 @@ const createBaseElement = ({ text, imageUrl }) => {
     return img;
   }
   return null;
+};
+
+const isIgnore = (commands) => {
+  return commands.some((it) => it === "ignore");
 };
 
 const getFontSize = (commands, scale) => {
