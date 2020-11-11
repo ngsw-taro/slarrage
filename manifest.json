@@ -9,7 +9,8 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content/presentation.js"]
+      "js": ["content/presentation.js"],
+      "css": ["content/presentation.css"]
     },
     {
       "matches": ["https://app.slack.com/*"],
