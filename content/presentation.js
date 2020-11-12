@@ -20,27 +20,28 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 const show = (message) => {
-  const element = createBaseElement(message);
-  if (element == null) return;
-
   const commands = message.command.split(" ");
   if (isIgnore(commands)) return;
 
+  // メインコンテンツを表示する要素をセットアップ
+  const element = createBaseElement(message);
+  if (element == null) return;
+  updateElementStyle(element, commands);
+
+  // 画面を流れる役割を担う要素をセットアップ
+  const wrapper = document.createElement("div");
+  wrapper.insertBefore(element, wrapper.firstChild);
+  wrapper.className = "slarrage";
+
   const lifespan = calcLifespan(message);
   const position = getPosition(commands);
-  element.style = `
-    opacity: ${preference.opacity};
-    z-index: ${10000 + messageCounts.random + messageCounts.bottom}; 
-    animation-duration: ${lifespan}s;
-    font-size: ${getFontSize(commands, preference.fontSize)};
-    color: ${getColor(commands)};
-    ${getStyleForPosition(position)}
-  `;
+  updateWrapperStyle(wrapper, commands, position, lifespan);
 
-  document.body.insertBefore(element, document.body.firstChild);
+  // bodyに追加して画面に反映
+  document.body.insertBefore(wrapper, document.body.firstChild);
   messageCounts[position]++;
   setTimeout(() => {
-    element.remove();
+    wrapper.remove();
     messageCounts[position]--;
   }, lifespan * 1000);
 };
@@ -50,16 +51,14 @@ const calcLifespan = ({ text }) => {
 };
 
 const createBaseElement = ({ text, imageUrl }) => {
-  if (text !== "") {
+  if (text.trim() !== "") {
     const div = document.createElement("div");
     div.innerText = text;
-    div.className = "slarrage";
     return div;
   }
   if (imageUrl !== "") {
     const img = document.createElement("img");
     img.src = imageUrl;
-    img.className = "slarrage";
     return img;
   }
   return null;
@@ -69,7 +68,13 @@ const isIgnore = (commands) => {
   return commands.some((it) => it === "ignore");
 };
 
-const getFontSize = (commands, scale) => {
+const updateElementStyle = (element, commands) => {
+  element.style.fontSize = getFontSize(commands);
+  element.style.color = getColor(commands);
+  element.style.animation = getAnimation(commands);
+};
+
+const getFontSize = (commands) => {
   let basePx = 32;
   if (commands.some((it) => it === "small")) {
     basePx = 24;
@@ -77,18 +82,43 @@ const getFontSize = (commands, scale) => {
   if (commands.some((it) => it === "big")) {
     basePx = 64;
   }
-  return `${basePx * scale}px`;
+  if (commands.some((it) => it === "huge")) {
+    basePx = 96;
+  }
+  return `${basePx * preference.fontSize}px`;
 };
 
 const getColor = (commands) => {
-  if (commands.some((it) => it === "red")) return "red";
-  if (commands.some((it) => it === "pink")) return "pink";
-  if (commands.some((it) => it === "black")) return "black";
-  if (commands.some((it) => it === "blue")) return "blue";
-  if (commands.some((it) => it === "green")) return "green";
-  if (commands.some((it) => it === "yellow")) return "yellow";
-  if (commands.some((it) => it === "orange")) return "orange";
-  return "white";
+  // カラーコード指定
+  for (const command of commands) {
+    if (command.match(/^#[0-9a-fA-F]{6}$/)) {
+      return command;
+    }
+  }
+
+  // カラー名
+  const colorNames = [
+    "red",
+    "pink",
+    "black",
+    "blue",
+    "green",
+    "yellow",
+    "orange",
+    "purple",
+    "cyan",
+    "lime",
+    "gold",
+    "brown",
+  ];
+  return commands.filter((it) => colorNames.includes(it))[0] ?? "white";
+};
+
+const getAnimation = (commands) => {
+  if (commands.includes("shake"))
+    return "slarrage-shake 0.1s linear infinite alternate";
+  if (commands.includes("spin")) return "slarrage-spin 1s linear infinite";
+  return "none";
 };
 
 const getPosition = (commands) => {
@@ -96,16 +126,22 @@ const getPosition = (commands) => {
   return "random";
 };
 
-const getStyleForPosition = (position) => {
+const updateWrapperStyle = (wrapper, commands, position, lifespan) => {
+  wrapper.style.opacity = preference.opacity;
+  wrapper.style.animationDuration = `${lifespan}s`;
+  wrapper.style.zIndex = `${
+    10000 + messageCounts.random + messageCounts.bottom
+  }`;
+
+  const scale = preference.fontSize;
   if (position === "bottom") {
-    return `
-      bottom: calc(2% + ${64 * messageCounts.bottom}px);
-      animation: none;
-      left: 50%;
-      transform: translateX(-50%);
-    `;
+    wrapper.style.bottom = `calc(2% + ${32 * messageCounts.bottom * scale}px)`;
+    wrapper.style.animation = "none";
+    wrapper.style.left = "50%";
+    wrapper.style.transform = "translateX(-50%)";
+  } else {
+    wrapper.style.top = `${
+      Math.random() * 32 * messageCounts.random * scale
+    }px`;
   }
-  return `
-    top: ${Math.random() * 50 * messageCounts.random}px;
-  `;
 };

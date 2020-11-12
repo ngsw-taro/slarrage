@@ -1,9 +1,27 @@
-@keyframes slarrage-animation {
+@keyframes slarrage-right-to-left {
   0% {
     transform: translateX(100vw);
   }
   100% {
     transform: translateX(-120%);
+  }
+}
+
+@keyframes slarrage-shake {
+  0% {
+    transform: translateY(0%);
+  }
+  100% {
+    transform: translateY(10%);
+  }
+}
+
+@keyframes slarrage-spin {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
 
@@ -14,17 +32,18 @@
   position: absolute;
   pointer-events: none;
 
-  animation-name: slarrage-animation;
+  animation-name: slarrage-right-to-left;
   animation-timing-function: linear;
 }
 
-div.slarrage {
+.slarrage div {
   white-space: nowrap;
   font-weight: bold;
   text-shadow: -3px -3px black, -3px 0 black, -3px 3px black, 0 -3px black,
     0 0 black, 0 3px black, 3px -3px black, 3px 0 black, 3px 3px black;
 }
 
-img.slarrage {
+.slarrage img {
   width: auto;
+  display: block;
 }
