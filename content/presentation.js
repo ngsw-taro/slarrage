@@ -19,7 +19,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
-const show = (message) => {
+const show = async (message) => {
   const commands = message.command.split(" ");
   if (isIgnore(commands)) return;
 
@@ -36,6 +36,15 @@ const show = (message) => {
   const lifespan = calcLifespan(message);
   const position = getPosition(commands);
   updateWrapperStyle(wrapper, commands, position, lifespan);
+
+  // delay
+  const index = commands.findIndex((it) => it.startsWith("delay:"));
+  if (index >= 0) {
+    const delaySeconds = commands[index].match(/delay:(\d)+/)?.[1];
+    if (delaySeconds != null) {
+      await new Promise((resolve) => setTimeout(resolve, delaySeconds * 1000));
+    }
+  }
 
   // bodyに追加して画面に反映
   document.body.insertBefore(wrapper, document.body.firstChild);
