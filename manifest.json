@@ -1,6 +1,9 @@
 {
   "name": "Slarrage",
   "version": "1.0.0",
+  "icons": {
+    "128": "icon.png"
+  },
   "manifest_version": 2,
   "permissions": ["tabs"],
   "background": {
