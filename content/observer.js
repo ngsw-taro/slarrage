@@ -4,6 +4,11 @@ window.addEventListener("load", () => {
   );
   observer.observe(target, { childList: true });
 });
+chrome.runtime.onMessage.addListener((request) => {
+  if ("stop" in request) {
+    observer.disconnect();
+  }
+});
 
 const observer = new MutationObserver((records) => {
   const messages = records.map(toMessages).flat();
