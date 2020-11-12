@@ -15,11 +15,17 @@
       }
       h1 {
         padding: 0;
-        margin: 0;
+        margin: 0 0 8px 0;
         font-size: 20px;
       }
+      button {
+        margin: 4px;
+        width: 100%;
+      }
+      ul {
+        margin: 0;
+      }
       #preference {
-        margin-top: 8px;
         display: grid;
         grid-template-columns: auto auto;
         grid-row-gap: 8px;
@@ -28,6 +34,7 @@
         font-size: 14px;
       }
       #example {
+        margin-top: 16px;
         border-radius: 8px;
         padding: 8px;
         background-color: gainsboro;
@@ -45,7 +52,12 @@
   </head>
   <body>
     <section>
-      <h1>Preference</h1>
+      <h1>Actions</h1>
+      <button id="start-watching">Start watching Slack</button>
+      <button id="show-comments">Show comments in this tab</button>
+    </section>
+    <section>
+      <h1>Preferences</h1>
       <div id="preference">
         <label for="opacity-input">Opacity</label>
         <input id="opacity-input" type="range" min="0" max="1" step="0.05" />

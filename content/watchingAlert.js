@@ -1,4 +1,4 @@
-window.addEventListener("load", () => {
+(() => {
   const div = document.createElement("div");
   div.style.zIndex = "9999";
   div.style.padding = "8px 16px";
@@ -28,4 +28,4 @@ window.addEventListener("load", () => {
   div.insertBefore(message, null);
   div.insertBefore(button, null);
   document.body.insertBefore(div, document.body.firstChild);
-});
+})();

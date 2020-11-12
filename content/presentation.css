@@ -29,7 +29,7 @@
   width: fit-content;
   height: fit-content;
   padding: 8px;
-  position: absolute;
+  position: fixed;
   pointer-events: none;
 
   animation-name: slarrage-right-to-left;
