@@ -8,14 +8,33 @@
       body {
         width: 240px;
         padding: 16px;
+        font-size: 14px;
+      }
+      section + section {
+        margin-top: 16px;
+      }
+      h1 {
+        padding: 0;
+        margin: 0;
+        font-size: 20px;
       }
       #preference {
+        margin-top: 8px;
         display: grid;
         grid-template-columns: auto auto;
         grid-row-gap: 8px;
       }
       #preference label {
         font-size: 14px;
+      }
+      #example {
+        border-radius: 8px;
+        padding: 8px;
+        background-color: gainsboro;
+      }
+      #example h2 {
+        margin: 0 0 4px 0;
+        font-size: 16px;
       }
       #author {
         margin-top: 16px;
@@ -25,14 +44,33 @@
     </style>
   </head>
   <body>
-    <div id="preference">
-      <label for="opacity-input">Opacity</label>
-      <input id="opacity-input" type="range" min="0" max="1" step="0.05" />
-      <label for="font-size-input">Font Size</label>
-      <input id="font-size-input" type="range" min="0.5" max="3" step="0.1" />
-    </div>
-    <div id="author">
-      Developed by <a href="https://twitter.com/ngsw_taro">@ngsw_taro</a>
-    </div>
+    <section>
+      <h1>Preference</h1>
+      <div id="preference">
+        <label for="opacity-input">Opacity</label>
+        <input id="opacity-input" type="range" min="0" max="1" step="0.05" />
+        <label for="font-size-input">Font Size</label>
+        <input id="font-size-input" type="range" min="0.5" max="3" step="0.1" />
+      </div>
+    </section>
+    <section>
+      <h1>Commands List</h1>
+      <ul>
+        <li>Size: small | big | huge</li>
+        <li>Color: red | green | blue | ...</li>
+        <li>Position: bottom</li>
+        <li>Animation: shake | spin</li>
+        <li>Hidden: ignore</li>
+      </ul>
+      <div id="example">
+        <h2>Example</h2>
+        Hello! [orange big bottom]
+      </div>
+    </section>
+    <footer>
+      <div id="author">
+        Developed by <a href="https://twitter.com/ngsw_taro">@ngsw_taro</a>
+      </div>
+    </footer>
   </body>
 </html>

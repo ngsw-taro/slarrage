@@ -33,6 +33,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       JSON.stringify(preference)
     );
     sendMessage({ preference });
+    return;
   }
   sendMessage(request);
 });
