@@ -1,3 +1,29 @@
+class ElementManager {
+  elementWithCommandsList = [];
+
+  addElement(element, commands) {
+    element.managedId = new Date().getTime();
+    this.elementWithCommandsList.push({ element, commands });
+  }
+  removeElement(element) {
+    const index = this.elementWithCommandsList.findIndex(
+      (it) => it.element.managedId === element.managedId
+    );
+    if (index >= 0) {
+      this.elementWithCommandsList.splice(index, 1);
+    }
+  }
+  updatePreference(preference) {
+    this.elementWithCommandsList.forEach(({ element, commands }) => {
+      element.style.opacity = preference.opacity;
+      element.childNodes.forEach(
+        (child) => (child.style.fontSize = getFontSize(commands))
+      );
+    });
+  }
+}
+
+const elementManager = new ElementManager();
 const messageCounts = {
   random: 0,
   bottom: 0,
@@ -16,6 +42,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
   if (request.preference != null) {
     preference = request.preference;
+    elementManager.updatePreference(preference);
   }
 });
 
@@ -24,13 +51,13 @@ const show = async (message) => {
   if (isIgnore(commands)) return;
 
   // メインコンテンツを表示する要素をセットアップ
-  const element = createBaseElement(message);
-  if (element == null) return;
-  updateElementStyle(element, commands);
+  const content = createContentElement(message);
+  if (content == null) return;
+  updateElementStyle(content, commands);
 
   // 画面を流れる役割を担う要素をセットアップ
   const wrapper = document.createElement("div");
-  wrapper.insertBefore(element, wrapper.firstChild);
+  wrapper.insertBefore(content, wrapper.firstChild);
   wrapper.className = "slarrage";
 
   const lifespan = calcLifespan(message);
@@ -47,9 +74,11 @@ const show = async (message) => {
   }
 
   // bodyに追加して画面に反映
+  elementManager.addElement(wrapper, commands);
   document.body.insertBefore(wrapper, document.body.firstChild);
   messageCounts[position]++;
   setTimeout(() => {
+    elementManager.removeElement(wrapper);
     wrapper.remove();
     messageCounts[position]--;
   }, lifespan * 1000);
@@ -59,7 +88,7 @@ const calcLifespan = ({ text }) => {
   return 6 + text.length * 0.2;
 };
 
-const createBaseElement = ({ text, imageUrl }) => {
+const createContentElement = ({ text, imageUrl }) => {
   if (text.trim() !== "") {
     const div = document.createElement("div");
     div.innerText = text;
