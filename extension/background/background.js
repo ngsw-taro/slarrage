@@ -14,9 +14,24 @@ if (initialPreference == null || initialPreference.version < 1) {
   );
 }
 
+const tabIds = new Set();
+chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
+  if (!("url" in changeInfo)) {
+    tabIds.delete(tabId);
+  }
+});
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   console.log(request);
 
+  if ("hasTabId" in request) {
+    sendResponse({ result: tabIds.has(request.hasTabId) });
+    return;
+  }
+  if ("addTabId" in request) {
+    tabIds.add(request.addTabId);
+    return;
+  }
   if ("getPreference" in request) {
     sendResponse({
       preference: JSON.parse(
