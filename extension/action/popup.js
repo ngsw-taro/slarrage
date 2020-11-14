@@ -17,21 +17,20 @@ const initCommon = () => {
 };
 
 const initActions = (tab) => {
-  const startWatchingButton = document.getElementById("start-watching");
-  if (!tab.url.startsWith("https://app.slack.com/client")) {
-    startWatchingButton.setAttribute("disabled", "true");
-  }
-  startWatchingButton.addEventListener("click", () => {
-    chrome.tabs.executeScript(tab.id, { file: "content/observer.js" });
-    chrome.tabs.executeScript(tab.id, { file: "content/watchingAlert.js" });
-    startWatchingButton.setAttribute("disabled", "true");
-  });
-
   const showCommentsButton = document.getElementById("show-comments");
   showCommentsButton.addEventListener("click", () => {
     chrome.tabs.executeScript(tab.id, { file: "content/presentation.js" });
     chrome.tabs.insertCSS(tab.id, { file: "content/presentation.css" });
     showCommentsButton.setAttribute("disabled", "true");
+    chrome.runtime.sendMessage({ addTabId: tab.id });
+  });
+
+  chrome.runtime.sendMessage({ hasTabId: tab.id }, ({ result }) => {
+    if (result) {
+      showCommentsButton.setAttribute("disabled", "true");
+    } else {
+      showCommentsButton.removeAttribute("disabled");
+    }
   });
 };
 

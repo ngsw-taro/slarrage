@@ -1,4 +1,4 @@
-(() => {
+window.addEventListener("load", () => {
   chrome.runtime.onMessage.addListener((request) => {
     if ("stop" in request) {
       observer.disconnect();
@@ -46,4 +46,4 @@
     const text = rawText.replace(/\[(.+?)]/, "");
     return { text, command };
   };
-})();
+});

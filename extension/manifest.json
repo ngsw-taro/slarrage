@@ -9,6 +9,12 @@
   "background": {
     "scripts": ["background/background.js"]
   },
+  "content_scripts": [
+    {
+      "matches": ["https://app.slack.com/*"],
+      "js": ["content/observer.js", "content/watchingAlert.js"]
+    }
+  ],
   "browser_action": {
     "default_title": "Slarrage",
     "default_popup": "action/popup.html"
