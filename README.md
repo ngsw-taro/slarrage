@@ -12,4 +12,3 @@ Chromeウェブストア https://chrome.google.com/webstore/detail/slarrage/dcbe
 
 - handwritten.otf: https://www.asterism-m.com/font/yomogifont/
 - horror.ttf: https://material.animehack.jp/font_gcomichorror.html
-- brush.ttf: https://www.vector.co.jp/soft/data/writing/se506577.html

@@ -137,7 +137,7 @@ if (typeof slarragePresentationLoaded === "undefined") {
 
     const getFontFamily = (commands) => {
       const preset = ["sans-serif", "serif", "monospace", "fantasy", "cursive"];
-      const addedOn = ["horror", "brush", "handwritten"];
+      const addedOn = ["horror", "handwritten"];
       const fontFamilyName =
         commands
           .map((it) => it.match(/font:(.+)/))
