@@ -1,0 +1,40 @@
+body {
+  width: 320px;
+  padding: 16px;
+  font-size: 14px;
+}
+section + section {
+  margin-top: 16px;
+}
+h1 {
+  padding: 0;
+  margin: 0 0 8px 0;
+  font-size: 20px;
+}
+button {
+  margin: 4px;
+  width: 100%;
+}
+#preference {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-row-gap: 8px;
+}
+#preference label {
+  font-size: 14px;
+}
+#example {
+  margin-top: 16px;
+  border-radius: 8px;
+  padding: 8px;
+  background-color: gainsboro;
+}
+#example h2 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+}
+#author {
+  margin-top: 16px;
+  color: gray;
+  text-align: center;
+}
