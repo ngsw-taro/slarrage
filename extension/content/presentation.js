@@ -50,18 +50,22 @@ if (typeof slarragePresentationLoaded === "undefined") {
       }
     });
 
-    const show = async (message) => {
-      const commands = message.command.split(" ");
+    const show = async (message, count) => {
+      const { commands } = message;
       if (isIgnore(commands)) return;
+      if (isBarrage(commands) && count <= 30) {
+        sleep(Math.random() * 100).then(() => show(message, (count ?? 0) + 1));
+      }
 
       // メインコンテンツを表示する要素をセットアップ
-      const content = createContentElement(message);
-      if (content == null) return;
-      updateElementStyle(content, commands);
+      const contentElements = createContentElements(message);
+      contentElements.forEach((element) =>
+        updateElementStyle(element, commands)
+      );
 
       // 画面を流れる役割を担う要素をセットアップ
       const wrapper = document.createElement("div");
-      wrapper.insertBefore(content, wrapper.firstChild);
+      contentElements.forEach((element) => wrapper.insertBefore(element, null));
       wrapper.className = "slarrage";
 
       const lifespan = calcLifespan(message);
@@ -73,9 +77,7 @@ if (typeof slarragePresentationLoaded === "undefined") {
       if (index >= 0) {
         const delaySeconds = commands[index].match(/delay:(\d+)/)?.[1];
         if (delaySeconds != null) {
-          await new Promise((resolve) =>
-            setTimeout(resolve, delaySeconds * 1000)
-          );
+          await sleep(delaySeconds * 1000);
         }
       }
 
@@ -90,31 +92,44 @@ if (typeof slarragePresentationLoaded === "undefined") {
       }, lifespan * 1000);
     };
 
-    const calcLifespan = ({ text }) => {
-      return 6 + text.length * 0.2;
+    const calcLifespan = ({ contents }) => {
+      return contents.reduce((acc, { text, imageUrl }) => {
+        const score = text != null ? text.length * 0.2 : 0.3;
+        return acc + score;
+      }, 6);
     };
 
-    const createContentElement = ({ text, imageUrl }) => {
-      if (text.trim() !== "") {
-        const div = document.createElement("div");
-        div.innerText = text;
-        return div;
-      }
-      if (imageUrl !== "") {
+    const createContentElements = ({ contents }) => {
+      return contents.map(({ text, imageUrl }) => {
+        if (text != null) {
+          const div = document.createElement("div");
+          div.innerText = text;
+          return div;
+        }
+
         const img = document.createElement("img");
         img.src = imageUrl;
         return img;
-      }
-      return null;
+      });
     };
 
     const isIgnore = (commands) => {
-      return commands.some((it) => it === "ignore");
+      return commands.includes("ignore");
+    };
+
+    const isBarrage = (commands) => {
+      return commands.includes("barrage");
     };
 
     const updateElementStyle = (element, commands) => {
+      switch (element.tagName) {
+        case "IMG":
+          element.style.width = getFontSize(commands);
+          break;
+        default:
+          element.style.fontSize = getFontSize(commands);
+      }
       element.style.fontFamily = getFontFamily(commands);
-      element.style.fontSize = getFontSize(commands);
       element.style.color = getColor(commands);
       element.style.animation = getAnimation(commands);
     };
@@ -202,5 +217,8 @@ if (typeof slarragePresentationLoaded === "undefined") {
         }px`;
       }
     };
+
+    const sleep = async (millis) =>
+      new Promise((resolve) => setTimeout(resolve, millis));
   })();
 }

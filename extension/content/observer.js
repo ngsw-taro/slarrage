@@ -29,21 +29,34 @@ window.addEventListener("load", () => {
         return;
       }
 
-      const img = node.querySelector("img");
-      const span = node.querySelector(".p-rich_text_section");
-      const textAndCommand =
-        span != null
-          ? divideTextAndCommand(span.innerText)
-          : { text: "", command: "" };
-      return { imageUrl: img?.src ?? "", ...textAndCommand };
+      const targetDiv = node.querySelector(".p-rich_text_section");
+      if (targetDiv == null) {
+        const img = node.querySelector("img");
+        return img != null
+          ? { contents: [{ imageUrl: img.src }], commands: ["huge"] }
+          : null;
+      }
+
+      const commands = extractCommands(targetDiv.innerText);
+      const contents = Array.from(targetDiv.childNodes, (child) => {
+        if (child.nodeName === "#text") {
+          return { text: removeCommands(child.textContent) };
+        }
+        const img =
+          child.nodeName === "IMG" ? child : child.querySelector("img");
+        return { imageUrl: img?.src };
+      });
+      return { contents, commands };
     }).filter((message) => message != null);
   };
 
-  // 元メッセージからテキストとコマンドを分けて、オブジェクトとして返す
-  const divideTextAndCommand = (rawText) => {
-    const commandResult = rawText.match(/\[(.+?)]/);
-    const command = commandResult !== null ? commandResult[1] : "";
-    const text = rawText.replace(/\[(.+?)]/, "");
-    return { text, command };
+  const extractCommands = (innerText) => {
+    const commandResult = innerText.match(/\[(.+?)]/);
+    if (commandResult == null) return [];
+    return commandResult[1].split(" ");
+  };
+
+  const removeCommands = (textContent) => {
+    return textContent.replace(/\[(.+?)]/, "");
   };
 });
