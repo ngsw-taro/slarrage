@@ -136,15 +136,20 @@ if (typeof slarragePresentationLoaded === "undefined") {
     };
 
     const getFontFamily = (commands) => {
-      const preset = ["sans-serif", "serif", "monospace", "fantasy", "cursive"];
-      const addedOn = ["horror", "handwritten"];
+      const fontFamilyNames = [
+        "sans-serif",
+        "serif",
+        "monospace",
+        "fantasy",
+        "cursive",
+      ];
       const fontFamilyName =
         commands
           .map((it) => it.match(/font:(.+)/))
           .find((it) => it != null)?.[1] ?? "";
-      return [...preset, ...addedOn].includes(fontFamilyName)
+      return fontFamilyNames.includes(fontFamilyName)
         ? fontFamilyName
-        : preset[0];
+        : fontFamilyNames[0];
     };
 
     const getFontSize = (commands) => {
