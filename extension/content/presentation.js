@@ -5,17 +5,34 @@ if (typeof slarragePresentationLoaded === "undefined") {
     class ElementManager {
       elementWithCommandsList = [];
 
-      addElement(element, commands) {
+      addElement(element, commands, position, lifespan) {
         element.managedId = new Date().getTime();
-        this.elementWithCommandsList.push({ element, commands });
-      }
-      removeElement(element) {
-        const index = this.elementWithCommandsList.findIndex(
-          (it) => it.element.managedId === element.managedId
+        const timerId = setTimeout(
+          () => this.removeElement(element.managedId),
+          lifespan * 1000
         );
-        if (index >= 0) {
-          this.elementWithCommandsList.splice(index, 1);
-        }
+        this.elementWithCommandsList.push({
+          element,
+          commands,
+          position,
+          timerId,
+        });
+        messageCounts[position]++;
+      }
+      removeElement(managedId) {
+        const index = this.elementWithCommandsList.findIndex(
+          (it) => it.element.managedId === managedId
+        );
+        if (index < 0) return;
+
+        const {
+          element,
+          position,
+          timerId,
+        } = this.elementWithCommandsList.splice(index, 1)[0];
+        element.remove();
+        messageCounts[position]--;
+        clearTimeout(timerId);
       }
       updatePreference(preference) {
         this.elementWithCommandsList.forEach(({ element, commands }) => {
@@ -23,6 +40,12 @@ if (typeof slarragePresentationLoaded === "undefined") {
           element.childNodes.forEach(
             (child) => (child.style.fontSize = getFontSize(commands))
           );
+        });
+      }
+      clear() {
+        [...this.elementWithCommandsList].forEach(({ element }) => {
+          console.log(element);
+          this.removeElement(element.managedId);
         });
       }
     }
@@ -40,9 +63,12 @@ if (typeof slarragePresentationLoaded === "undefined") {
     });
 
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-      const { messages } = request;
+      const { messages, clearComments } = request;
       if (messages != null) {
         messages.forEach(show);
+      }
+      if (clearComments != null) {
+        elementManager.clear();
       }
       if (request.preference != null) {
         preference = request.preference;
@@ -88,14 +114,8 @@ if (typeof slarragePresentationLoaded === "undefined") {
       }
 
       // bodyに追加して画面に反映
-      elementManager.addElement(wrapper, commands);
+      elementManager.addElement(wrapper, commands, position, lifespan);
       document.body.insertBefore(wrapper, document.body.firstChild);
-      messageCounts[position]++;
-      setTimeout(() => {
-        elementManager.removeElement(wrapper);
-        wrapper.remove();
-        messageCounts[position]--;
-      }, lifespan * 1000);
     };
 
     const calcLifespan = ({ contents }) => {
