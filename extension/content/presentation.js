@@ -53,9 +53,10 @@ if (typeof slarragePresentationLoaded === "undefined") {
     const show = async (message, count) => {
       const { commands } = message;
       if (isIgnore(commands)) return;
-      if (isBarrage(commands) && count <= 30) {
-        sleep(Math.random() * 100).then(() => show(message, (count ?? 0) + 1));
-      }
+      // 一旦このコマンドは隠す
+      // if (isBarrage(commands) && count <= 30) {
+      //   sleep(Math.random() * 100).then(() => show(message, (count ?? 0) + 1));
+      // }
 
       // メインコンテンツを表示する要素をセットアップ
       const contentElements = createContentElements(message);
