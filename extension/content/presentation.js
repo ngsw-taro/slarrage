@@ -71,7 +71,7 @@ if (typeof slarragePresentationLoaded === "undefined") {
       // delay
       const index = commands.findIndex((it) => it.startsWith("delay:"));
       if (index >= 0) {
-        const delaySeconds = commands[index].match(/delay:(\d)+/)?.[1];
+        const delaySeconds = commands[index].match(/delay:(\d+)/)?.[1];
         if (delaySeconds != null) {
           await new Promise((resolve) =>
             setTimeout(resolve, delaySeconds * 1000)
@@ -113,20 +113,31 @@ if (typeof slarragePresentationLoaded === "undefined") {
     };
 
     const updateElementStyle = (element, commands) => {
+      element.style.fontFamily = getFontFamily(commands);
       element.style.fontSize = getFontSize(commands);
       element.style.color = getColor(commands);
       element.style.animation = getAnimation(commands);
     };
 
+    const getFontFamily = (commands) => {
+      const preset = ["sans-serif", "serif", "monospace", "fantasy", "cursive"];
+      const addedOn = ["horror", "brush", "handwritten"];
+      const fontFamilyName =
+        commands
+          .map((it) => it.match(/font:(.+)/))
+          .find((it) => it != null)?.[1] ?? "";
+      return [...preset, ...addedOn].includes(fontFamilyName)
+        ? fontFamilyName
+        : preset[0];
+    };
+
     const getFontSize = (commands) => {
       let basePx = 32;
-      if (commands.some((it) => it === "small")) {
+      if (commands.includes("small")) {
         basePx = 24;
-      }
-      if (commands.some((it) => it === "big")) {
+      } else if (commands.includes("big")) {
         basePx = 64;
-      }
-      if (commands.some((it) => it === "huge")) {
+      } else if (commands.includes("huge")) {
         basePx = 96;
       }
       return `${basePx * preference.fontSize}px`;

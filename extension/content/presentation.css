@@ -25,6 +25,19 @@
   }
 }
 
+@font-face {
+  font-family: "horror";
+  src: url("chrome-extension://__MSG_@@extension_id__/content/font/horror.ttf");
+}
+@font-face {
+  font-family: "brush";
+  src: url("chrome-extension://__MSG_@@extension_id__/content/font/brush.ttf");
+}
+@font-face {
+  font-family: "handwritten";
+  src: url("chrome-extension://__MSG_@@extension_id__/content/font/handwritten.otf");
+}
+
 .slarrage {
   width: fit-content;
   height: fit-content;
