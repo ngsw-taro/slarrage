@@ -19,11 +19,16 @@ const initCommon = () => {
 
 const initActions = (tab) => {
   const showCommentsButton = document.getElementById("show-comments");
+  const clearCommentsButton = document.getElementById("clear-comments");
+
   showCommentsButton.addEventListener("click", () => {
     chrome.tabs.executeScript(tab.id, { file: "content/presentation.js" });
     chrome.tabs.insertCSS(tab.id, { file: "content/presentation.css" });
     showCommentsButton.setAttribute("disabled", "true");
     chrome.runtime.sendMessage({ addTabId: tab.id });
+  });
+  clearCommentsButton.addEventListener("click", () => {
+    chrome.runtime.sendMessage({ clearComments: true });
   });
 
   chrome.runtime.sendMessage({ hasTabId: tab.id }, ({ result }) => {
