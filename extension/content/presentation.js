@@ -50,13 +50,18 @@ if (typeof slarragePresentationLoaded === "undefined") {
       }
     });
 
-    const show = async (message, count) => {
+    const show = async (message) => {
       const { commands } = message;
       if (isIgnore(commands)) return;
-      // 一旦このコマンドは隠す
-      // if (isBarrage(commands) && count <= 30) {
-      //   sleep(Math.random() * 100).then(() => show(message, (count ?? 0) + 1));
-      // }
+
+      const barrageCount = getBarrageCount(commands);
+      if (barrageCount > 0) {
+        const nextMessage = {
+          ...message,
+          commands: [`barrage:${barrageCount - 1}`, ...message.commands],
+        };
+        sleep(Math.random() * 100).then(() => show(nextMessage));
+      }
 
       // メインコンテンツを表示する要素をセットアップ
       const contentElements = createContentElements(message);
@@ -118,8 +123,14 @@ if (typeof slarragePresentationLoaded === "undefined") {
       return commands.includes("ignore");
     };
 
-    const isBarrage = (commands) => {
-      return commands.includes("barrage");
+    const getBarrageCount = (commands) => {
+      if (!preference.barrage || commands.includes("bottom")) return 0;
+      const result = commands
+        .map((it) => it.match(/barrage(:(\d+))?/))
+        .find((it) => it != null);
+      if (result == null) return 0;
+      if (result[2] != null) return Math.min(parseInt(result[2], 10), 100);
+      return 30;
     };
 
     const updateElementStyle = (element, commands) => {
@@ -191,6 +202,7 @@ if (typeof slarragePresentationLoaded === "undefined") {
     };
 
     const getAnimation = (commands) => {
+      if (!preference.animation) return "none";
       if (commands.includes("shake"))
         return "slarrage-shake 0.1s linear infinite alternate";
       if (commands.includes("spin")) return "slarrage-spin 1s linear infinite";
@@ -198,6 +210,7 @@ if (typeof slarragePresentationLoaded === "undefined") {
     };
 
     const getPosition = (commands) => {
+      if (!preference.position) return "random";
       if (commands.some((it) => it === "bottom")) return "bottom";
       return "random";
     };

@@ -3,52 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <title>Slarrge</title>
+    <link rel="stylesheet" type="text/css" href="popup.css" />
     <script src="popup.js"></script>
-    <style>
-      body {
-        width: 240px;
-        padding: 16px;
-        font-size: 14px;
-      }
-      section + section {
-        margin-top: 16px;
-      }
-      h1 {
-        padding: 0;
-        margin: 0 0 8px 0;
-        font-size: 20px;
-      }
-      button {
-        margin: 4px;
-        width: 100%;
-      }
-      ul {
-        margin: 0;
-      }
-      #preference {
-        display: grid;
-        grid-template-columns: auto auto;
-        grid-row-gap: 8px;
-      }
-      #preference label {
-        font-size: 14px;
-      }
-      #example {
-        margin-top: 16px;
-        border-radius: 8px;
-        padding: 8px;
-        background-color: gainsboro;
-      }
-      #example h2 {
-        margin: 0 0 4px 0;
-        font-size: 16px;
-      }
-      #author {
-        margin-top: 16px;
-        color: gray;
-        text-align: center;
-      }
-    </style>
   </head>
   <body>
     <section>
@@ -66,15 +22,48 @@
     </section>
     <section>
       <h1>Commands List</h1>
-      <ul>
-        <li>Size: small | big | huge</li>
-        <li>Color: red | green | blue | ...</li>
-        <li>Font: sans-serif | serif | fantasy | ...</li>
-        <li>Position: bottom</li>
-        <li>Animation: shake | spin</li>
-        <li>Timing: delay:&lt;seconds&gt;</li>
-        <li>Hidden: ignore</li>
-      </ul>
+      <table>
+        <tr>
+          <td>Size</td>
+          <td>small | big | huge</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Color</td>
+          <td>red | green | blue | ...</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Font</td>
+          <td>font:sans-serif | font:serif | font:fantasy | ...</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Position</td>
+          <td>bottom</td>
+          <td><input type="checkbox" id="position" /></td>
+        </tr>
+        <tr>
+          <td>Animation</td>
+          <td>shake | spin</td>
+          <td><input type="checkbox" id="animation" /></td>
+        </tr>
+        <tr>
+          <td>Timing</td>
+          <td>delay:&lt;seconds&gt;</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Hitden</td>
+          <td>ignore</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Other</td>
+          <td>barrage:&lt;num&gt;</td>
+          <td><input type="checkbox" id="barrage" /></td>
+        </tr>
+      </table>
       <div id="example">
         <h2>Example</h2>
         Hello! [orange big bottom]

@@ -1,17 +1,20 @@
 const LOCAL_STORAGE_PREFERENCE_KEY = "preference";
 
 // initialize or migrate
-const initialPreference = localStorage.getItem(LOCAL_STORAGE_PREFERENCE_KEY);
-if (initialPreference == null || initialPreference.version < 1) {
-  const pref = {
-    version: 1,
-    opacity: 0.75,
-    fontSize: 1,
-  };
-  localStorage.setItem(
-    LOCAL_STORAGE_PREFERENCE_KEY,
-    JSON.stringify({ ...(initialPreference ?? {}), ...pref })
-  );
+const initialPreference = JSON.parse(
+  localStorage.getItem(LOCAL_STORAGE_PREFERENCE_KEY) ?? '{"version":0}'
+);
+const defaultPreference = {
+  version: 2,
+  opacity: 0.75,
+  fontSize: 1,
+  barrage: true,
+  position: true,
+  animation: true,
+};
+if (initialPreference.version < 2) {
+  const pref = { ...defaultPreference, ...initialPreference, version: 2 };
+  localStorage.setItem(LOCAL_STORAGE_PREFERENCE_KEY, JSON.stringify(pref));
 }
 
 const tabIds = new Set();

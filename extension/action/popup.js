@@ -4,6 +4,7 @@ window.addEventListener("load", () => {
     initCommon();
     initActions(tab);
     initPreferences();
+    initCommandsList();
   });
 });
 
@@ -53,5 +54,34 @@ const initPreferences = () => {
     const { preference } = response;
     opacityInput.value = preference.opacity;
     fontSizeInput.value = preference.fontSize;
+  });
+};
+
+const initCommandsList = () => {
+  const positionCheckbox = document.getElementById("position");
+  const animationCheckbox = document.getElementById("animation");
+  const barrageCheckbox = document.getElementById("barrage");
+
+  positionCheckbox.addEventListener("change", (e) => {
+    chrome.runtime.sendMessage({
+      setPreference: { position: e.target.checked },
+    });
+  });
+  animationCheckbox.addEventListener("change", (e) => {
+    chrome.runtime.sendMessage({
+      setPreference: { animation: e.target.checked },
+    });
+  });
+  barrageCheckbox.addEventListener("change", (e) => {
+    chrome.runtime.sendMessage({
+      setPreference: { barrage: e.target.checked },
+    });
+  });
+
+  chrome.runtime.sendMessage({ getPreference: true }, (response) => {
+    const { preference } = response;
+    positionCheckbox.checked = preference.position;
+    animationCheckbox.checked = preference.animation;
+    barrageCheckbox.checked = preference.barrage;
   });
 };
