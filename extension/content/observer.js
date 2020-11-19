@@ -31,23 +31,36 @@ window.addEventListener("load", () => {
 
       const targetDiv = node.querySelector(".p-rich_text_section");
       if (targetDiv == null) {
+        // botの場合
+        const botMessageSpan = node.querySelector(
+          'span[data-qa="message-text"]'
+        );
+        if (botMessageSpan != null) {
+          return toMessage(botMessageSpan);
+        }
+
+        // 画像や絵文字のみの場合
         const img = node.querySelector("img");
         return img != null
           ? { contents: [{ imageUrl: img.src }], commands: ["huge"] }
           : null;
       }
 
-      const commands = extractCommands(targetDiv.innerText);
-      const contents = Array.from(targetDiv.childNodes, (child) => {
-        if (child.nodeName === "#text") {
-          return { text: removeCommands(child.textContent) };
-        }
-        const img =
-          child.nodeName === "IMG" ? child : child.querySelector("img");
-        return { imageUrl: img?.src };
-      });
-      return { contents, commands };
+      // その他、テキストのみ、テキスト絵文字混合の場合
+      return toMessage(targetDiv);
     }).filter((message) => message != null);
+  };
+
+  const toMessage = (element) => {
+    const commands = extractCommands(element.innerText);
+    const contents = Array.from(element.childNodes, (child) => {
+      if (child.nodeName === "#text") {
+        return { text: removeCommands(child.textContent) };
+      }
+      const img = child.nodeName === "IMG" ? child : child.querySelector("img");
+      return { imageUrl: img?.src };
+    });
+    return { contents, commands };
   };
 
   const extractCommands = (innerText) => {
