@@ -11,10 +11,20 @@ window.addEventListener("load", () => {
       chrome.runtime.sendMessage({ messages });
     }
   });
-  const target = document.querySelector(
-    'div[data-qa="message_pane"] .c-virtual_list__scroll_container'
-  );
-  observer.observe(target, { childList: true });
+
+  const observe = () => {
+    const target = document.querySelector(
+      'div[data-qa="message_pane"] .c-virtual_list__scroll_container'
+    );
+    // タイミングによってはtargetがまだできていないので見つかるまでループする
+    if (target === null) {
+      setTimeout(observe, 1000);
+    } else {
+      observer.observe(target, { childList: true });
+    }
+  };
+
+  observe();
 
   const toMessages = (record) => {
     return Array.from(record.addedNodes, (node) => {
