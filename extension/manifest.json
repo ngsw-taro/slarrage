@@ -15,7 +15,7 @@
       "js": ["content/observer.js", "content/watchingAlert.js"]
     }
   ],
-  "browser_action": {
+  "action": {
     "default_title": "Slarrage",
     "default_popup": "action/popup.html"
   }
