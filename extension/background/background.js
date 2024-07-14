@@ -1,9 +1,5 @@
 const LOCAL_STORAGE_PREFERENCE_KEY = "preference";
 
-// initialize or migrate
-const initialPreference = JSON.parse(
-  localStorage.getItem(LOCAL_STORAGE_PREFERENCE_KEY) ?? '{"version":0}'
-);
 const defaultPreference = {
   version: 2,
   opacity: 0.75,
@@ -12,10 +8,26 @@ const defaultPreference = {
   position: true,
   animation: true,
 };
-if (initialPreference.version < 2) {
-  const pref = { ...defaultPreference, ...initialPreference, version: 2 };
-  localStorage.setItem(LOCAL_STORAGE_PREFERENCE_KEY, JSON.stringify(pref));
-}
+
+const isEmptyObject = (obj) => Object.keys(obj).length === 0;
+
+chrome.runtime.onInstalled.addListener(async () => {
+  // initialize or migrate
+  const local = await chrome.storage.local.get(LOCAL_STORAGE_PREFERENCE_KEY);
+
+  const initialPreference = JSON.parse(
+    isEmptyObject(local)
+      ? '{"version": 0}'
+      : local[LOCAL_STORAGE_PREFERENCE_KEY]
+  );
+
+  if (initialPreference.version < 2) {
+    const migrated = { ...defaultPreference, ...initialPreference, version: 2 };
+    await chrome.storage.local.set({
+      [LOCAL_STORAGE_PREFERENCE_KEY]: JSON.stringify(migrated),
+    });
+  }
+});
 
 const tabIds = new Set();
 chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
@@ -24,7 +36,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
   }
 });
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   console.log(request);
 
   if ("hasTabId" in request) {
@@ -36,20 +48,25 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return;
   }
   if ("getPreference" in request) {
+    const local = await chrome.storage.local.get(LOCAL_STORAGE_PREFERENCE_KEY);
+    const json = isEmptyObject(local)
+      ? "{}"
+      : local[LOCAL_STORAGE_PREFERENCE_KEY];
+
     sendResponse({
-      preference: JSON.parse(
-        localStorage.getItem(LOCAL_STORAGE_PREFERENCE_KEY)
-      ),
+      [LOCAL_STORAGE_PREFERENCE_KEY]: JSON.parse(json),
     });
     return;
   }
   if ("setPreference" in request) {
-    const json = localStorage.getItem(LOCAL_STORAGE_PREFERENCE_KEY) ?? "{}";
+    const local = await chrome.storage.local.get(LOCAL_STORAGE_PREFERENCE_KEY);
+    const json = isEmptyObject(local)
+      ? "{}"
+      : local[LOCAL_STORAGE_PREFERENCE_KEY];
     const preference = { ...JSON.parse(json), ...request.setPreference };
-    localStorage.setItem(
-      LOCAL_STORAGE_PREFERENCE_KEY,
-      JSON.stringify(preference)
-    );
+    await chrome.storage.local.set({
+      [LOCAL_STORAGE_PREFERENCE_KEY]: JSON.stringify(preference),
+    });
     sendMessage({ preference });
     return;
   }
