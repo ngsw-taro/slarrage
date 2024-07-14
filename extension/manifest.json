@@ -7,7 +7,7 @@
   "manifest_version": 3,
   "permissions": ["activeTab"],
   "background": {
-    "scripts": ["background/background.js"]
+    "service_worker": "background/background.js"
   },
   "content_scripts": [
     {
