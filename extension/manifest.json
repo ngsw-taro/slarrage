@@ -4,7 +4,7 @@
   "icons": {
     "128": "icon.png"
   },
-  "manifest_version": 2,
+  "manifest_version": 3,
   "permissions": ["activeTab"],
   "background": {
     "scripts": ["background/background.js"]
