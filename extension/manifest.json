@@ -5,7 +5,7 @@
     "128": "icon.png"
   },
   "manifest_version": 3,
-  "permissions": ["storage", "activeTab"],
+  "permissions": ["storage", "scripting", "activeTab"],
   "background": {
     "service_worker": "background/background.js"
   },
