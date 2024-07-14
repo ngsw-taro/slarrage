@@ -74,7 +74,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 });
 
 const sendMessage = (message) => {
-  chrome.runtime.sendMessage(message);
+  // chrome.runtime.sendMessage(message);
   chrome.tabs.query({ active: true }, (tabs) => {
     tabs.forEach((tab) => chrome.tabs.sendMessage(tab.id, message));
   });
