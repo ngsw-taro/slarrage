@@ -1,13 +1,13 @@
 {
   "name": "Slarrage",
-  "version": "1.2.1",
+  "version": "2.0.0",
   "icons": {
     "128": "icon.png"
   },
-  "manifest_version": 2,
-  "permissions": ["activeTab"],
+  "manifest_version": 3,
+  "permissions": ["storage", "scripting", "activeTab"],
   "background": {
-    "scripts": ["background/background.js"]
+    "service_worker": "background/background.js"
   },
   "content_scripts": [
     {
@@ -15,7 +15,7 @@
       "js": ["content/observer.js", "content/watchingAlert.js"]
     }
   ],
-  "browser_action": {
+  "action": {
     "default_title": "Slarrage",
     "default_popup": "action/popup.html"
   }
